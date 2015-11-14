@@ -148,6 +148,8 @@ public class SimpleTest {
 
       // create and populate the database
       manager.createDB();
+      //manager.getBalance(55555);
+      //manager.addBalance(2, 1);
       for (int i = 0; i < MAX_ACCOUNTS; i++) {
         manager.createAccount(i + 1);
       }

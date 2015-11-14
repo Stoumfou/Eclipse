@@ -83,7 +83,7 @@ public class DataStoreManager {
     // TODO Auto-generated method stub
 	  //String sql = CREATE_TABLE_DUMMY;
 
-	  String sqlCreate = "drop table OPERATION;"
+	  String sqlCreateDB = "drop table OPERATION;"
 	  		+ "drop table ACCOUNT;"
 	  		+ "create table ACCOUNT               ("
 	  		+ "ACCNUMBER INT NOT NULL,"
@@ -97,10 +97,8 @@ public class DataStoreManager {
 	  		+ "constraint OPERATION_PK primary key(OPNUMBER),"
 	  		+ "constraint OPERATION_FK_ACCNUMBER foreign key (ACCNUMBER) references ACCOUNT(ACCNUMBER));";
 	  try {
-		  System.out.println(sqlCreate);
-		PreparedStatement ppStm = (PreparedStatement) con.prepareStatement(sqlCreate);
-		System.out.println(ppStm);
-		ppStm.executeUpdate(sqlCreate);
+		PreparedStatement ppStm = (PreparedStatement) con.prepareStatement(sqlCreateDB);
+		ppStm.executeUpdate(sqlCreateDB);
 		System.out.println("Tables créées");
 	} catch (SQLException e) {
 		// TODO Auto-generated catch block
@@ -123,6 +121,15 @@ public class DataStoreManager {
    */
   public boolean createAccount(int number) throws DataStoreException {
     // TODO Auto-generated method stub
+	 String sqlCreateAccount = "INSERT INTO account(accnumber) value ("+number+");";
+	try {
+		stm = con.createStatement();
+		stm.executeUpdate(sqlCreateAccount);
+		return true;
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}	  
     return false;
   }
 
@@ -137,7 +144,21 @@ public class DataStoreManager {
    */
   public double getBalance(int number) throws DataStoreException {
     // TODO Auto-generated method stub
-    return 0;
+	  String sqlGetBalance="SELECT solde FROM account where ACCNUMBER="+number+";";
+	  try {
+		stm= con.createStatement();
+		res=stm.executeQuery(sqlGetBalance);
+		if(res.next()){
+			double balance = res.getDouble("solde");
+			//System.out.println(balance);
+			return balance;}
+		return -1.0;
+		
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    return -1.0;
   }
 
   /**
@@ -156,7 +177,26 @@ public class DataStoreManager {
    */
   public double addBalance(int number, double amount) throws DataStoreException {
     // TODO Auto-generated method stub
-    return 0;
+	  if(amount>0)
+	  {
+	  String sqlAddBalance = "UPDATE account SET solde="+amount+" where ACCNUMBER="+number+";";
+	  String sqlReturnBalance = "SELECT solde from account where ACCNUMBER="+number+";";
+	  try {
+		stm= con.createStatement();
+		stm.executeUpdate(sqlAddBalance);
+		res = stm.executeQuery(sqlReturnBalance);
+		if(res.next()){
+			double balance = res.getDouble("solde");
+			return balance;}
+		return -1.0;
+		
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  }
+	  
+    return -1.0;
   }
 
   /**
