@@ -215,6 +215,14 @@ public class DataStoreManager {
 				+ "where ACCNUMBER="+from+";"
 						+ "UPDATE account SET solde=("+toBalance+"+"+amount+") "
 				+ "where ACCNUMBER="+to+";COMMIT;";
+		try {
+			stm = con.createStatement();
+			stm.executeUpdate(sqlTransfert);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return false;
 	}
 
