@@ -218,6 +218,7 @@ public class DataStoreManager {
 		try {
 			stm = con.createStatement();
 			stm.executeUpdate(sqlTransfert);
+			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
