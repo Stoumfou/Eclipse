@@ -169,54 +169,26 @@ public class DataStoreManager {
 	 */
 	public double addBalance(int number, double amount) throws DataStoreException {
 		// TODO Auto-generated method stub
-		String sqlReturnBalance = "SELECT solde from account where ACCNUMBER="+number+";";
+		//String sqlReturnBalance = "SELECT solde from account where ACCNUMBER="+number+";";
 		String sqlAddBalance = "UPDATE account SET solde="+amount+" where ACCNUMBER="+number+";";
 		try {
-			stm= con.createStatement();
-			res = stm.executeQuery(sqlReturnBalance);
-			if(res.next()){
-				double balance = res.getDouble("solde");
-				if (amount<balance && amount<0){
-					stm.executeUpdate(sqlAddBalance);
-					res = stm.executeQuery(sqlReturnBalance);
-					if(res.next()){
-						double balanceAfter = res.getDouble("solde");
-						return balanceAfter;
-						}
-				}else if (amount>balance && amount<0){
-					return -1.0;
-				}else if (amount>0){
-					stm.executeUpdate(sqlAddBalance);
-					res = stm.executeQuery(sqlReturnBalance);
-					if(res.next()){
-						double balanceAfter = res.getDouble("solde");
-						return balanceAfter;
-					}
-				}
+			stm = con.createStatement();
+			double balance = getBalance(number);
+			if (amount<balance && amount<0){
+				stm.executeUpdate(sqlAddBalance);
+				double balanceAfter = getBalance(number);
+				return balanceAfter;
+			}else if (amount>balance && amount<0){
+				return -1.0;
+			}else if (amount>0){
+				stm.executeUpdate(sqlAddBalance);
+				double balanceAfter = getBalance(number);
+				return balanceAfter;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		if(amount>0)
-		{
-
-			try {
-				stm= con.createStatement();
-				stm.executeUpdate(sqlAddBalance);
-				res = stm.executeQuery(sqlReturnBalance);
-				if(res.next()){
-					double balance = res.getDouble("solde");
-					return balance;}
-				return -1.0;
-
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
 		return -1.0;
 	}
 
