@@ -81,7 +81,8 @@ public class DataStoreManager {
 		// TODO Auto-generated method stub
 		// String sql = CREATE_TABLE_DUMMY;
 
-		String sqlCreateDB = "drop table OPERATION;" + "drop table ACCOUNT;" + "create table ACCOUNT               ("
+		String sqlCreateDB = "drop table OPERATION;" + "drop table ACCOUNT;"+"set storage_engine = INNODB;"+
+		"SET autocommit = 0;"+"create table ACCOUNT               ("
 				+ "ACCNUMBER INT NOT NULL," + "SOLDE DOUBLE CHECK(solde>=0),"
 				+ "constraint ACCOUNT_PK primary key (ACCNUMBER));" + "create table OPERATION (" + "OPNUMBER int,"
 				+ "ACCNUMBER int," + "BALANCE double," + "OPDATE date not null,"
@@ -169,11 +170,11 @@ public class DataStoreManager {
 	 */
 	public double addBalance(int number, double amount) throws DataStoreException {
 		// TODO Auto-generated method stub
-		//String sqlReturnBalance = "SELECT solde from account where ACCNUMBER="+number+";";
-		String sqlAddBalance = "UPDATE account SET solde="+amount+" where ACCNUMBER="+number+";";
+		double balance = getBalance(number);
+		String sqlAddBalance = "UPDATE account SET solde=("+balance+"+("+amount+")) "
+				+ "where ACCNUMBER="+number+";";
 		try {
 			stm = con.createStatement();
-			double balance = getBalance(number);
 			if (amount<balance && amount<0){
 				stm.executeUpdate(sqlAddBalance);
 				double balanceAfter = getBalance(number);
@@ -208,6 +209,12 @@ public class DataStoreManager {
 	 */
 	public boolean transfer(int from, int to, double amount) throws DataStoreException {
 		// TODO Auto-generated method stub
+		double fromBalance = getBalance(from);
+		double toBalance = getBalance(to);
+		String sqlTransfert = "START TRANSACTION;UPDATE account SET solde=("+fromBalance+"-"+amount+") "
+				+ "where ACCNUMBER="+from+";"
+						+ "UPDATE account SET solde=("+toBalance+"+"+amount+") "
+				+ "where ACCNUMBER="+to+";COMMIT;";
 		return false;
 	}
 
